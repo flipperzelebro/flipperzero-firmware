@@ -44,4 +44,5 @@
 #include "alutech_at_4n.h"
 #include "kinggates_stylo_4k.h"
 #include "bin_raw.h"
+#include "mastercode.h"
 #include "HITAG2.h"
