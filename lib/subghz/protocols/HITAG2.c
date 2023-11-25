@@ -1,4 +1,4 @@
-#include "HITAG2.h"
+#include "hitag2.h"
 #include <lib/toolbox/manchester_decoder.h>
 
 #include "../blocks/const.h"
@@ -124,9 +124,13 @@ void subghz_protocol_decoder_HITAG2_feed(void* context, bool level, uint32_t dur
     ManchesterEvent event = ManchesterEventReset;
     switch(instance->decoder.parser_step) {
     case HITAG2DecoderStepReset:
-        if((level) && DURATION_DIFF(duration, subghz_protocol_HITAG2_const.te_short * 4) <
+        /*if((level) && DURATION_DIFF(duration, subghz_protocol_HITAG2_const.te_short * 4) <
                           subghz_protocol_HITAG2_const.te_delta * 4) {
             instance->decoder.parser_step = HITAG2DecoderStepFoundPreambula;
+            instance->header_count++; */
+        if((level) && DURATION_DIFF(duration, 800) < subghz_protocol_HITAG2_const.te_delta * 4) {
+            // instance->decoder.parser_step = HITAG2DecoderStepFoundPreambula;
+            instance->decoder.parser_step = HITAG2DecoderStepDecoderData;
             instance->header_count++;
         }
         break;
