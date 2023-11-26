@@ -26,9 +26,12 @@
         ((((dip >> 0xE) & 0x3) == check_dip) ? '*' : '_')
 
 static const SubGhzBlockConst subghz_protocol_mastercode_const = {
-    .te_short = 1072,
-    .te_long = 2145,
-    .te_delta = 150,
+    //.te_short = 1072,
+    //.te_long = 2145,
+    //.te_delta = 150,
+    .te_short = 1022,
+    .te_long = 2044,
+    .te_delta = 200,
     .min_count_bit_for_found = 36,
 };
 
