@@ -21,7 +21,7 @@ static Iso14443_3bError iso14443_3b_poller_prepare_trx(Iso14443_3bPoller* instan
     furi_assert(instance);
 
     if(instance->state == Iso14443_3bPollerStateIdle) {
-        return iso14443_3b_poller_async_activate(instance, NULL);
+        return iso14443_3b_poller_activate(instance, NULL);
     }
 
     return Iso14443_3bErrorNone;
@@ -63,8 +63,7 @@ static Iso14443_3bError iso14443_3b_poller_frame_exchange(
     return ret;
 }
 
-Iso14443_3bError
-    iso14443_3b_poller_async_activate(Iso14443_3bPoller* instance, Iso14443_3bData* data) {
+Iso14443_3bError iso14443_3b_poller_activate(Iso14443_3bPoller* instance, Iso14443_3bData* data) {
     furi_assert(instance);
     furi_assert(instance->nfc);
 
@@ -132,9 +131,18 @@ Iso14443_3bError
             break;
         }
 
-        if(bit_buffer_get_size_bytes(instance->rx_buffer) != 1 ||
-           bit_buffer_get_byte(instance->rx_buffer, 0) != 0) {
-            FURI_LOG_D(TAG, "Unexpected ATTRIB response");
+        if(bit_buffer_get_size_bytes(instance->rx_buffer) != 1) {
+            FURI_LOG_W(
+                TAG,
+                "Unexpected ATTRIB response length: %zu",
+                bit_buffer_get_size_bytes(instance->rx_buffer));
+        }
+
+        if(bit_buffer_get_byte(instance->rx_buffer, 0) != 0) {
+            FURI_LOG_D(
+                TAG,
+                "Incorrect CID in ATTRIB response: %02X",
+                bit_buffer_get_byte(instance->rx_buffer, 0));
             instance->state = Iso14443_3bPollerStateActivationFailed;
             ret = Iso14443_3bErrorCommunication;
             break;
